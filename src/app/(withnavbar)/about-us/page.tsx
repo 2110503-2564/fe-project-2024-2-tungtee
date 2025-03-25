@@ -1,11 +1,13 @@
 'use client';
 
 export default function AboutPage() {
+
     const team = [
         {
             id: "6733120021",
             name: "Noravit",
             surname: "Bunyutnoparat"
+            
         },
         {
             id: "6733057121",
@@ -30,7 +32,7 @@ export default function AboutPage() {
                     <div key={index} className=" p-6 rounded-xl w-72 bg-[#1C1C1C] flex flex-col items-center gap-3">
                         <p>{member.id}</p>
                         <p>{member.name} {member.surname}</p>
-                        <p>{member.faculty}</p>
+                        <p>Faculty Of Engineering</p>
                     </div>
                 ))}
             </div>

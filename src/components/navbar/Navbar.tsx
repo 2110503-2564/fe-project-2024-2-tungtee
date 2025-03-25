@@ -5,8 +5,7 @@ import SignUp from './SignUp';
 import ProfileMenu from './ProfileMenu';
 import Logo from './Logo';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOption';
 
 export default async function TopMenu() {
 

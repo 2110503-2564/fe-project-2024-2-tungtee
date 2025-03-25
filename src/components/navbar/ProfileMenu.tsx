@@ -68,7 +68,7 @@ export default function ProfileMenu() {
                     isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
                 }`}
             >
-                <Link href="/profile-settings" className="block px-4 py-3 hover:bg-gray-100">
+                <Link href="/profile-setting" className="block px-4 py-3 hover:bg-gray-100">
                     Profile Settings
                 </Link>
 
