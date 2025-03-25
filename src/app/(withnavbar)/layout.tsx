@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import Navbar from "@/components/navbar/Navbar";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/authOption";
 import NextAuthProvider from '@/providers/NextAuthProvider'
 import ReduxProvider from "@/redux/ReduxProvider";
 
