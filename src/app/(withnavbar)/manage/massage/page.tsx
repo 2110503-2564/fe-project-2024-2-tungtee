@@ -37,9 +37,7 @@ export default function Page() {
 
     return (
         <main className="flex justify-center items-center h-screen mt-100">
-            { 
-                (profile.data.role == "admin")?
-                    <form action={addMassage}>
+                    <form action={editMassage}>
                         <div className="text-xl text-blue-700">Create Massage</div>
                         
                         <div className="flex items-center w-1/2 my-2">
@@ -107,9 +105,6 @@ export default function Page() {
                         </div>
                         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white p-2 rounded">Add New Massage</button>
                     </form>
-                    :null
-            }
-            </div>
         </main>
     );
 }
