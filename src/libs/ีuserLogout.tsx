@@ -3,7 +3,7 @@
 export default async function userLogOut() {
     const BACKEND_URL = process.env.BACKEND_URL
     const response = await fetch(
-        "http://localhost:5000/api/v1/auth/logout",
+        `${process.env.BACKEND_URL}/api/v1/auth/logout`,
         {
             method: "GET",
             headers: {
