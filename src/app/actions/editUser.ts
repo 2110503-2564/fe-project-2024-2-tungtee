@@ -1,6 +1,6 @@
 "use server";
 
-import Massage from "@/db/models/User";
+import User from "@/db/models/User";
 import { dbConnect } from "@/db/dbConnect";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";

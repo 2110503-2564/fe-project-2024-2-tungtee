@@ -49,7 +49,7 @@ export default function Page() {
                         </div>
 
                         <div>
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="tel">Province</label>
+                            <label className="w-auto block text-gray-700 pr=4" htmlFor="tel">Email</label>
                             <input type="number" required id="tel" name="tel" placeholder="Province" 
                             className="mx-1 bg-white border-2 border-gray-200 rounded w-full p-2
                             text-gray-700 focus:outline-none focus:border-blue-400"/>

@@ -38,7 +38,14 @@ export default function Page() {
     return (
         <main className="flex justify-center items-center h-screen mt-100">
                     <form action={editMassage}>
-                        <div className="text-xl text-blue-700">Create Massage</div>
+                        <div className="text-xl text-blue-700">Edit Massage</div>
+
+                        <div className="flex items-center w-1/2 my-2">
+                            <label className="w-auto block text-gray-700 pr=4" htmlFor="name">ID</label>
+                            <input type="text" required id="name" name="name" placeholder="Massage ID" 
+                            className=" mx-2 bg-white border-2 border-gray-200 rounded w-full p-2
+                            text-gray-700 focus:outline-none focus:border-blue-400"/>
+                        </div>
                         
                         <div className="flex items-center w-1/2 my-2">
                             <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Name</label>
