@@ -4,8 +4,16 @@ import Massage from "@/db/models/Massage";
 import { dbConnect } from "@/db/dbConnect";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 
 export async function editMassage(editUserForm: FormData) {
+    const session = await getServerSession();
+    if (!session || session.user.role !== 'admin') {
+        console.error('You do not have permission to edit this massage.');
+        return;
+    }
+
+    const massageId = editUserForm.get("_id");
     const name = editUserForm.get("name");
     const picture = editUserForm.get("picture");
     const address = editUserForm.get("address");
@@ -20,25 +28,17 @@ export async function editMassage(editUserForm: FormData) {
         await dbConnect();
         const updatedMassage = await Massage.findByIdAndUpdate(
             massageId,
-            {name,
-            picture,
-            address,
-            district,
-            province,
-            tel,
-            open,
-            close,
-            hourRate,},
-            {new : true}
+            { name, picture, address, district, province, tel, open, close, hourRate },
+            { new: true }
         );
 
         if (!updatedMassage) {
             console.error("Massage not found.");
             return;
         }
-
+        
     } catch (error) {
-        console.error("Error saving user:", error);
+        console.error("Error updating massage:", error);
     }
 
     revalidateTag("massages");

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import getUserProfile from '@/libs/getUserProfile';
-import { editUser } from '@/app/actions/editUser';
+import { editMassage } from '@/app/actions/editMassage';
 
 export default function Page() {
     const [user, setUser] = useState<{ name: string; email: string } | null>(null);
@@ -36,7 +36,7 @@ export default function Page() {
     if (error) return <div>{error}</div>;
 
     return (
-        <main className="bg-slate-100 m-5 p-5 mt-[150px]">
+        <main className="flex justify-center items-center h-screen mt-100">
             { 
                 (profile.data.role == "admin")?
                     <form action={addMassage}>
@@ -109,6 +109,7 @@ export default function Page() {
                     </form>
                     :null
             }
+            </div>
         </main>
-    )
+    );
 }

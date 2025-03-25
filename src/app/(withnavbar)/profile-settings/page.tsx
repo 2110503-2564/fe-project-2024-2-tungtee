@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import getUserProfile from '@/libs/getUserProfile';
-import { editMassage } from '@/app/actions/editMassage';
+import { editUser } from '@/app/actions/editUser';
 
 export default function Page() {
     const [user, setUser] = useState<{ name: string; email: string } | null>(null);
@@ -35,14 +35,11 @@ export default function Page() {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    const profile = await getUserProfile(session.user.token)
-    var createdAt = new Date(profile.data.createdAt)
-
     return (
         <main className="flex justify-center items-center h-screen mt-100">
             <div className="bg-white p-6 rounded-lg shadow-lg w-[350px]">
                 <h1 className="text-center text-black text-lg mb-4">Edit Profile</h1>
-                <form action={editMassage}>
+                <form action={editUser}>
 
                         <div className="flex items-center w-1/2 my-2">
                             <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Name</label>
