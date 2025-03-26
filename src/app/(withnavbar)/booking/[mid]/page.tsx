@@ -6,9 +6,6 @@ import LocationDateReserve from '@/components/booking/LocationDateReserve';
 import { useSearchParams } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/redux/store';
-import { addBooking } from '@/redux/features/massSlice';
 import { MassItem, BookItem } from '../../../../../interfaces';
 import getMassage from '@/libs/getMassage';
 import Footer from '@/components/footer/Footer';
@@ -16,11 +13,10 @@ import { dbConnect } from '@/db/dbConnect';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Booking from '@/db/models/Booking';
-
+import { useSession } from 'next-auth/react'; // เพิ่มการ import useSession
+import addBooking from '@/libs/addBooking';
 
 export default function Page({ params }: { params: { mid: string } }) {
-
-
     interface MassageResponse {
         success: boolean;
         data: MassItem;
@@ -28,63 +24,56 @@ export default function Page({ params }: { params: { mid: string } }) {
 
     const [massageDetail, setMassageDetail] = useState<MassageResponse | null>(null);
     const [selectedInput, setSelectedInput] = useState<string | null>(null);
-    const dispatch = useDispatch<AppDispatch>();
-
-    const [bookDate, setBookDate] = useState<Dayjs | null>(dayjs)
-    const [bookTime, setBookTime] = useState<Dayjs | null>(dayjs)
-    const [duration, setDuration] = useState<string>("1")
-
+    const [bookDate, setBookDate] = useState<Dayjs | null>(dayjs);
+    const [bookTime, setBookTime] = useState<Dayjs | null>(dayjs);
+    const [bookDuration, setBookDuration] = useState<string>("1");
+    const { data: session } = useSession(); // เพิ่มการใช้ useSession
 
     
+
+    if(!session) return ( <div></div>)
+
     const makeBooking = async () => {
-        alert("🛒 makeBooking ถูกเรียกแล้ว!"); // Debug ตรงนี้
+        alert("🛒 makeBooking ถูกเรียกแล้ว!");
 
         const { mid } = params;
-        const massageName = massageDetail?.data?.name; // แทนที่การใช้ name
+        const massageName = massageDetail?.data?.name;
 
+        if (mid && massageName && bookDate && bookDuration && bookTime && session) { // เพิ่มการตรวจสอบ session
+            try {
+                const response = await addBooking(
+                    mid,
+                    session.user.token,
+                    bookDate.format("YYYY-MM-DD"),
+                    bookTime.format('HH:mm'),
+                    bookDuration
+                );
 
-        if (mid && massageName && bookDate && duration && bookTime) {
-            const item: BookItem = {
-                id: mid,
-                name: massageName,
-                bookDate: dayjs(bookDate).format("YYYY/MM/DD"),
-                bookTime: dayjs(bookTime).format("HH:mm"),
-                bookDuration: duration
+                alert("ข้อมูลถูกส่งไปยัง backend: " + JSON.stringify(response)); // แสดง response จาก backend
+
+                // จัดการ response ตามต้องการ เช่น แสดงข้อความสำเร็จหรือข้อผิดพลาด
+                if (response.success) {
+                    alert("การจองสำเร็จ!");
+                    // redirect ไปยังหน้าสำเร็จ
+                } else {
+                    alert("เกิดข้อผิดพลาดในการจอง: " + response.message);
+                    // แสดงข้อผิดพลาด
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการส่งข้อมูล: ", error);
+                alert("เกิดข้อผิดพลาดในการส่งข้อมูลไปยัง backend");
             }
-            dispatch(addBooking(item))
-
-            alert("📦 ส่งข้อมูลไปที่ Redux: " + JSON.stringify(item))
-
-            
         } else {
-            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า mid:" + JSON.stringify(mid))
-            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า mid:" + JSON.stringify(massageName))
-            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า mid:" + JSON.stringify(bookDate))
-            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า mid:" + JSON.stringify(duration))
-            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า mid:" + JSON.stringify(bookTime))
+            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า mid:" + JSON.stringify(mid));
+            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า massageName:" + JSON.stringify(massageName));
+            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า bookDate:" + JSON.stringify(bookDate));
+            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า duration:" + JSON.stringify(bookDuration));
+            alert("⚠️ ข้อมูลไม่ครบ! ตรวจสอบค่า bookTime:" + JSON.stringify(bookTime));
+            if (!session) {
+                alert("⚠️ ไม่พบ session ผู้ใช้");
+            }
         }
-    }
-
-    // const addBookingtoWeb = async (addBookForm: FormData) => {
-    //     "use server"
-    //     const apptDate = addBookForm.get("name")
-    //     const user = addBookForm.get("user")
-    //     const massage = addBookForm.get("massage")
-    //     const createdAt = addBookForm.get("createdAt")
-
-    //     try {
-    //         await dbConnect()
-    //         const book = await Booking.create({
-    //             "apptDate": apptDate,
-    //             "user": user,
-    //             "massage": massage,
-    //         })
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    //     revalidateTag("books")
-    //     redirect("/home")
-    // }
+    };
 
     useEffect(() => {
         const fetchMassageDetail = async () => {
@@ -94,14 +83,11 @@ export default function Page({ params }: { params: { mid: string } }) {
             } catch (error) {
                 console.error('Error fetching massage detail:', error);
             }
-
         };
-
         fetchMassageDetail();
     }, [params.mid]);
 
     const massageItem = massageDetail?.data;
-
 
     const handleFocus = useCallback((inputName: string) => {
         setSelectedInput(inputName);
@@ -124,7 +110,15 @@ export default function Page({ params }: { params: { mid: string } }) {
     }
 
 
+        // แปลง bookDuration ให้เป็นตัวเลข
+    const duration = parseFloat(bookDuration) || 0; // ถ้า bookDuration เป็น undefined/null ใช้ 0 แทน
+    const pricePerHour = massageItem.hourRate;
+    const subtotal = pricePerHour * duration;
+    const vat = subtotal * 0.07; // คำนวณ VAT 7%
+    const totalPrice = subtotal + vat; // คำนวณราคารวม VAT
 
+
+    
 
     return (
         <form
@@ -197,7 +191,7 @@ export default function Page({ params }: { params: { mid: string } }) {
                     <div className="w-full h-auto bg-[#1C1C1C] rounded-xl p-6 flex flex-col gap-4 ">
                         <h2 className="text-xl font-semibold">Booking Detail</h2> {/* เปลี่ยนเป็นภาษาไทย */}
                         <LocationDateReserve onDateChange={(value: Dayjs) => { setBookDate(value) }}
-                            onDurationChange={(value: string) => { setDuration(value) }}
+                            onDurationChange={(value: string) => { setBookDuration(value) }}
                             onBookTimeChange={(value: Dayjs) => { setBookTime(value) }} />
                     </div>
 
@@ -243,7 +237,6 @@ export default function Page({ params }: { params: { mid: string } }) {
                                 className="w-full h-[72px] px-4 py-3 rounded-md bg-white/20 border border-white/30 placeholder-white/70"
                             />
                         </div> */}
-
 
                         <div className="flex flex-row flex-wrap gap-4">
                             <input
@@ -327,7 +320,7 @@ export default function Page({ params }: { params: { mid: string } }) {
                         </div>
                         <div className="flex flex-row justify-between">
                             <p className="text-[#818181]">Date & Time</p>
-                            <p>??</p>
+                            <p>{`${bookDate} ${bookTime}`} </p>
                         </div>
 
                         <div className="flex-grow h-px bg-[#2C2C2C]"></div>
@@ -335,7 +328,7 @@ export default function Page({ params }: { params: { mid: string } }) {
                         <h1 className="text-lg font-semibold">Price Details</h1>
                         <div className="flex flex-row justify-between">
                             <p className="text-[#818181]">Price per hour</p>
-                            <p>{massageItem.hourRate} ฿</p>
+                            <p>{pricePerHour} ฿</p>
                         </div>
                         <div className="flex flex-row justify-between">
                             <p className="text-[#818181]">Total Guests</p>
@@ -343,18 +336,19 @@ export default function Page({ params }: { params: { mid: string } }) {
                         </div>
                         <div className="flex flex-row justify-between">
                             <p className="text-[#818181]">Duration</p>
-                            <p>???</p>
+                            <p>{duration} hour</p>
                         </div>
+                        
                         <div className="flex flex-row justify-between">
                             <p className="text-[#818181]">Vat 7%</p>
-                            <p>??? ฿</p>
+                            <p>{vat.toFixed(2)} ฿</p>
                         </div>
 
                         <div className="flex-grow h-px bg-[#2C2C2C]"></div>
 
                         <div className="flex flex-row justify-between">
                             <h1 className="text-lg font-semibold">Total Price</h1>
-                            <h1 className="text-lg font-semibold">{massageItem.hourRate} ฿</h1>
+                            <h1 className="text-lg font-semibold">{totalPrice.toFixed(2)} ฿</h1>
                         </div>
                     </div>
 

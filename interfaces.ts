@@ -12,9 +12,13 @@ export interface MassItem {
 }
 
 export interface BookItem {
-    id : string 
-    name: string
-    bookDate: string 
+    _id : string 
+    user: string
+    massage: {
+      id: string
+      name: string
+    }
+    apptDate: string 
     bookTime: string
     bookDuration: string
 }

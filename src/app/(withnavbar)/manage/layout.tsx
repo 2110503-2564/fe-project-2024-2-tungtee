@@ -4,7 +4,7 @@ export default function ManageReservationLayout( {children, booking, massage} : 
     return (
         <div className="flex flex-col w-full">
             { children }
-            { massage }
+            {/* { massage } */}
             {/* { booking }  */}
         </div>
     )

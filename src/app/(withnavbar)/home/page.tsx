@@ -16,8 +16,8 @@ export default function Page() {
             <div className="h-36"></div>
             <ThirdPage/>
             <div className="h-36"></div>
-            <FourthPage/>
-            <div className="h-36"></div>
+            {/* <FourthPage/>
+            <div className="h-36"></div> */}
             <Footer/>
             
         </main>

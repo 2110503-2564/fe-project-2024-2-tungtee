@@ -4,114 +4,159 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import getUserProfile from '@/libs/getUserProfile';
 import { editMassage } from '@/app/actions/editMassage';
+import getMassage from '@/libs/getMassage';
 
 export default function Page() {
-    const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+    const [massage, setMassage] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { data: session } = useSession();
 
+    const id = "" 
+
+    if(!session) return ( <div></div>)
+
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchMassage = async () => {
             if (!session || !session.user.token) {
                 console.error("Session or token is missing.");
                 return;
             }
 
             try {
-                const profile = await getUserProfile(session.user.token);
+                const profile = await getMassage(id);
                 console.log("Profile data:", profile);
-
+                setMassage(profile.massage);
             } catch (error) {
-                console.error('Error fetching user role:', error);
+                console.error('Error fetching user profile:', error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchUser();
+        fetchMassage();
     }, [session]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
     return (
-        <main className="flex justify-center items-center h-screen mt-100">
-                    <form action={editMassage}>
-                        <div className="text-xl text-blue-700">Edit Massage</div>
+        <main className='w-auto h-screen bg-white/5 mx-[8%] mt-[100px] flex flex-col gap-2 items-center'>
+            <form action={editMassage} className='bg-white/5 p-6 w-1/3'>
+                <div className="text-xl text-blue-700">Edit Massage</div>
 
-                        <div className="flex items-center w-1/2 my-2">
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="name">ID</label>
-                            <input type="text" required id="name" name="name" placeholder="Massage ID" 
-                            className=" mx-2 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
-                        
-                        <div className="flex items-center w-1/2 my-2">
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Name</label>
-                            <input type="text" required id="name" name="name" placeholder="Massage Name" 
-                            className=" mx-2 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
-                        
-                        <div className="flex items-center w-1/2 my-2">
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="picture">Picture</label>
-                            <input type="text" required id="picture" name="picture" placeholder="Link" 
-                            className="mx-2 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">ID</label>
+                    <input
+                        type="text"
+                        name="_id"
+                        placeholder="Massage ID"
+                        defaultValue={massage?._id || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div className="flex items-center w-1/2 my-2">
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="address">Address</label>
-                            <input type="text" required id="address" name="address" placeholder="Address" 
-                            className="mx-2 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Massage Name"
+                        defaultValue={massage?.name || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div className="flex items-center w-1/2 my-2">
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="district">District</label>
-                            <input type="number" required id="district" name="district" placeholder="District" 
-                            className="mx-1 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Picture</label>
+                    <input
+                        type="text"
+                        name="picture"
+                        placeholder="Massage Picture"
+                        defaultValue={massage?.picture || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div>
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="tel">Province</label>
-                            <input type="number" required id="tel" name="tel" placeholder="Province" 
-                            className="mx-1 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Address</label>
+                    <input
+                        type="text"
+                        name="address"
+                        placeholder="Address"
+                        defaultValue={massage?.address || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div>
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="province">Telephone</label>
-                            <input type="number" required id="province" name="province" placeholder="Telephone" 
-                            className="mx-1 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">District</label>
+                    <input
+                        type="text"
+                        name="district"
+                        placeholder="District"
+                        defaultValue={massage?.district || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div>
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="open">Open</label>
-                            <input type="number" required id="open" name="open" placeholder="Telephone" 
-                            className="mx-1 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Province</label>
+                    <input
+                        type="text"
+                        name="province"
+                        placeholder="Province"
+                        defaultValue={massage?.province || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div>
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="clsoe">Close</label>
-                            <input type="number" required id="clsoe" name="clsoe" placeholder="Telephone" 
-                            className="mx-1 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
-                        
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Telephone</label>
+                    <input
+                        type="text"
+                        name="tel"
+                        placeholder="Telephone"
+                        defaultValue={massage?.tel || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
 
-                        <div className="flex items-center w-1/2 my-2">
-                            <label className="w-auto block text-gray-700 pr=4" htmlFor="dayRate">Rate</label>
-                            <input type="text" required id="dayRate" name="dayRate" placeholder="Daily Rate (including insurance)" 
-                            className="mx-2 bg-white border-2 border-gray-200 rounded w-full p-2
-                            text-gray-700 focus:outline-none focus:border-blue-400"/>
-                        </div>
-                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white p-2 rounded">Add New Massage</button>
-                    </form>
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Open</label>
+                    <input
+                        type="text"
+                        name="open"
+                        placeholder="Open time"
+                        defaultValue={massage?.open || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
+
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Close</label>
+                    <input
+                        type="text"
+                        name="close"
+                        placeholder="Close time"
+                        defaultValue={massage?.close || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
+
+                <div className="flex items-center my-2 w-full justify-between">
+                    <label className="w-auto block text-gray-700 pr=4" htmlFor="name">Hour Rate</label>
+                    <input
+                        type="text"
+                        name="close"
+                        placeholder="Hour Rate"
+                        defaultValue={massage?.close || ''}
+                        className=" mx-2 bg-white border-2 border-gray-200 rounded w-auto p-2 text-gray-700 focus:outline-none focus:border-blue-400"
+                    />
+                </div>
+
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white p-2 rounded">Submit</button>
+            </form>
         </main>
     );
 }
